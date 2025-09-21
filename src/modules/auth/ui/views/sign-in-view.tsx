@@ -6,6 +6,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { OctagonAlertIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import {FaGithub, FaGoogle} from "react-icons/fa";
 
 // ! Alias Packages
 import { Input } from "@/components/ui/input";
@@ -21,8 +24,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+;
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -31,8 +33,8 @@ const formSchema = z.object({
 
 export const SignInView = () => {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null)
-  const [pending, isPending] = useState(false)
+  const [error, setError] = useState<string | null>(null);
+  const [pending, isPending] = useState(false);
   const initialValues = {
     email: "",
     password: "",
@@ -43,27 +45,47 @@ export const SignInView = () => {
     defaultValues: initialValues,
   });
 
-
-  const onSubmit =(data:z.infer<typeof formSchema>) =>{
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
     setError(null);
-    isPending(true)
+    isPending(true);
     authClient.signIn.email(
       {
         email: data.email,
-        password: data.password
+        password: data.password,
+        callbackURL:"/"
       },
       {
-        onSuccess:()=>{
-          isPending(false)
+        onSuccess: () => {
+          isPending(false);
           router.push("/")
         },
-        onError:({error})=>{
-          setError(error.message)
-          isPending(false)
-        }
+        onError: ({ error }) => {
+          setError(error.message);
+          isPending(false);
+        },
+      }
+    );
+  };
+
+  const onSocial = (provider: "github" | "google") => {
+    setError(null);
+    isPending(true);
+    authClient.signIn.social(
+      {
+        provider: provider,
+        callbackURL:"/"
       },
-    )
-  }
+      {
+        onSuccess: () => {
+          isPending(false);
+        },
+        onError: ({ error }) => {
+          setError(error.message);
+          isPending(false);
+        },
+      }
+    );
+  };
 
   console.log("Sign in view");
   return (
@@ -133,22 +155,36 @@ export const SignInView = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <Button
+                    onClick={() => {
+                      onSocial("google");
+                    }}
                     disabled={pending}
                     variant="outline"
                     type="button"
                     className="w-full"
-                  >Google</Button>
+                  >
+                    <FaGoogle />
+                  </Button>
                   <Button
+                    onClick={() => {
+                      onSocial("github");
+                    }}
                     disabled={pending}
                     variant="outline"
                     type="button"
                     className="w-full"
-                  >Github</Button>
+                  >
+                    <FaGithub />
+                  </Button>
                 </div>
-                <div className="text-center text-sm font-medium">Don&apos;t have an account?{" "}
-                <Link href="/sign-up" className="underline underline-offset-4">
-                Sign up
-                </Link>
+                <div className="text-center text-sm font-medium">
+                  Don&apos;t have an account?{" "}
+                  <Link
+                    href="/sign-up"
+                    className="underline underline-offset-4"
+                  >
+                    Sign up
+                  </Link>
                 </div>
               </div>
             </form>
@@ -162,7 +198,9 @@ export const SignInView = () => {
       </Card>
 
       <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-      By clicking continue, you agree to our <a href="#">Terms of Service</a> & <a href="#">Privacy Policy</a></div>
+        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
+        & <a href="#">Privacy Policy</a>
+      </div>
     </div>
   );
 };
