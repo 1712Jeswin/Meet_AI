@@ -29,7 +29,6 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { is } from "drizzle-orm";
 import { Description } from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
 
