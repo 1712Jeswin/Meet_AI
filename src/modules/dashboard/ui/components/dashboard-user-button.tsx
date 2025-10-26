@@ -12,7 +12,6 @@ import {
 import {
   Drawer,
   DrawerContent,
-  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
@@ -24,7 +23,6 @@ import { GeneratedAvatar } from "@/components/generated-avatar";
 import {
   ChevronDownIcon,
   CreditCardIcon,
-  LogOut,
   LogOutIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
