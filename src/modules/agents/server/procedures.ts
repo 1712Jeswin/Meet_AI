@@ -4,10 +4,7 @@ import { db } from "@/db";
 import { agents } from "@/db/schema";
 import { agentsInsertSchema } from "../schemas";
 
-import {
-  createTRPCRouter,
-  protectedProcedure,
-} from "@/trpc/init";
+import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
 import {
   DEFAULT_PAGE,
@@ -15,12 +12,12 @@ import {
   MAX_PAGE_SIZE,
   MIN_PAGE_SIZE,
 } from "@/constants";
-
+import { TRPCError } from "@trpc/server";
 
 export const agentsRouter = createTRPCRouter({
   getOne: protectedProcedure
     .input(z.object({ id: z.string() }))
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const [existingAgent] = await db
         .select({
           // TODO: Change to Actual Count!!!
@@ -28,7 +25,13 @@ export const agentsRouter = createTRPCRouter({
           ...getTableColumns(agents),
         })
         .from(agents)
-        .where(eq(agents.id, input.id));
+        .where(
+          and(eq(agents.id, input.id), eq(agents.userId, ctx.auth.user.id)),
+        );
+
+      if (!existingAgent) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Agent not found" });
+      }
 
       return existingAgent;
     }),
@@ -43,7 +46,7 @@ export const agentsRouter = createTRPCRouter({
           .max(MAX_PAGE_SIZE)
           .default(DEFAULT_PAGE_SIZE),
         search: z.string().nullish(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const { search, page, pageSize } = input;
@@ -58,8 +61,8 @@ export const agentsRouter = createTRPCRouter({
         .where(
           and(
             eq(agents.userId, ctx.auth.session.userId),
-            search ? ilike(agents.name, `%${search}%`) : undefined
-          )
+            search ? ilike(agents.name, `%${search}%`) : undefined,
+          ),
         )
         .orderBy(desc(agents.createdAt), desc(agents.id))
         .limit(pageSize)
@@ -71,18 +74,17 @@ export const agentsRouter = createTRPCRouter({
         .where(
           and(
             eq(agents.userId, ctx.auth.session.userId),
-            search ? ilike(agents.name, `%${search}%`) : undefined
-          )
+            search ? ilike(agents.name, `%${search}%`) : undefined,
+          ),
         );
 
-        const totalPages = Math.ceil(total.count / pageSize);
+      const totalPages = Math.ceil(total.count / pageSize);
 
-        return {
-          items: data, 
-          total: total.count,
-          totalPages
-        }
-
+      return {
+        items: data,
+        total: total.count,
+        totalPages,
+      };
     }),
   create: protectedProcedure
     .input(agentsInsertSchema)
