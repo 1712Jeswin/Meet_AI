@@ -1,10 +1,7 @@
 import { auth } from "@/lib/auth";
 import { MeetingsListHeader } from "@/modules/meetings/ui/components/meetings-list-header";
-import {
-  MeetingsView,
-  MeetingsViewError,
-  MeetingsViewLoading,
-} from "@/modules/meetings/ui/view/meetings-view";
+import { MeetingssViewLoading, MeetingsView, MeetingsViewError } from "@/modules/meetings/ui/views/meetings-view";
+
 import { getQueryClient, trpc } from "@/trpc/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { headers } from "next/headers";
@@ -28,7 +25,7 @@ const Page = async () => {
     <>
       <MeetingsListHeader />
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <Suspense fallback={<MeetingsViewLoading />}>
+        <Suspense fallback={<MeetingssViewLoading />}>
           <ErrorBoundary fallback={<MeetingsViewError />}>
             <MeetingsView />
           </ErrorBoundary>
