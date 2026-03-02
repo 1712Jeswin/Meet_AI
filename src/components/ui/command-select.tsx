@@ -1,6 +1,6 @@
 import { ReactNode, useState } from "react"
 import { Button } from "./button"
-import { ChevronsDownIcon } from "lucide-react"
+import { ChevronsUpDownIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { CommandResponsiveDialog } from "./command"
 import { CommandEmpty, CommandInput, CommandItem, CommandList } from "cmdk"
@@ -45,7 +45,7 @@ export const CommandSelect = ({
                 <div>
                     {selectedOption?.children ?? placeholder}
                 </div>
-                <ChevronsDownIcon />
+                <ChevronsUpDownIcon />
             </Button>
             <CommandResponsiveDialog
                 shouldFilter ={!onSearch}
@@ -62,7 +62,8 @@ export const CommandSelect = ({
                         options.map((option) => (
                             <CommandItem
                                 key={option.id}
-                                onSelect={() => {(option.value)
+                                onSelect={() => {
+                                    onSelect(option.value)
                                 setOpen(false)}}
                             >
                                 {option.children}
