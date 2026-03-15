@@ -1,8 +1,8 @@
 import { ReactNode, useState } from "react"
-import { Button } from "./button"
+import { Button } from "./ui/button"
 import { ChevronsUpDownIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { CommandResponsiveDialog } from "./command"
+import { CommandResponsiveDialog } from "./ui/command"
 import { CommandEmpty, CommandInput, CommandItem, CommandList } from "cmdk"
 
 interface Props{

@@ -20,7 +20,7 @@ import { toast } from "sonner";
 import { meetingsInsertSchema } from "../../schemas";
 import { MeetingGetOne } from "../../types";
 import { useState } from "react";
-import { CommandSelect } from "@/components/ui/command-select";
+import { CommandSelect } from "@/components/command-select";
 import { NewAgentDialog } from "@/modules/agents/ui/components/new-agent-dialog";
 
 interface MeetingFormProps {

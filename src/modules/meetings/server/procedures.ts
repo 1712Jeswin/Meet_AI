@@ -1,3 +1,5 @@
+// ! Procedures
+
 import { z } from "zod";
 import { and, count, desc, eq, getTableColumns, ilike, sql } from "drizzle-orm";
 import { db } from "@/db";
@@ -79,7 +81,7 @@ export const meetingsRouter = createTRPCRouter({
           .max(MAX_PAGE_SIZE)
           .default(DEFAULT_PAGE_SIZE),
         search: z.string().nullish(),
-        agendId: z.string().nullish(),
+        agentId: z.string().nullish(),
         status: z.enum([
           MeetingStatus.Upcoming,
           MeetingStatus.Active,
